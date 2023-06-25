@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1062546884932",
+    "project_id": "trabprogmob",
+    "storage_bucket": "trabprogmob.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062546884932:android:8d9209ef25df633c91ef11",
+        "android_client_info": {
+          "package_name": "com.example.trabprogmob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1062546884932-b5n88kqve9oa6rq3rh4aejuas3dqur66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvpDRzKD1DwKXneHriMzkCJVG8VhtmMDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062546884932-b5n88kqve9oa6rq3rh4aejuas3dqur66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
