@@ -53,9 +53,11 @@ public class MainActivity extends AppCompatActivity {
                                 String role = user.getRole();
                                 if ("admin".equals(role)) {
                                     Intent adminIntent = new Intent(MainActivity.this, AdminActivity.class);
+                                    adminIntent.putExtra("currentUserId", user.getId()); // Passar o ID do usuário admin autenticado
                                     startActivity(adminIntent);
                                 } else {
                                     Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
+                                    homeIntent.putExtra("currentUserId", user.getId()); // Passar o ID do usuário autenticado
                                     startActivity(homeIntent);
                                 }
                                 finish(); // Optional: finish MainActivity so user cannot go back to it

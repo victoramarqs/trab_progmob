@@ -26,6 +26,8 @@ public class AdminActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private List<User> userList;
 
+    private String currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,9 @@ public class AdminActivity extends AppCompatActivity {
         userController = new UserController();
         usersRecyclerView = findViewById(R.id.usersRecyclerView);
         userList = new ArrayList<>();
+
+        // Recuperar o currentUserId do intent
+        currentUserId = getIntent().getStringExtra("currentUserId");
 
         // Define adapter
         userAdapter = new UserAdapter(userList, this, new UserAdapter.OnItemClickListener() {
@@ -58,18 +63,16 @@ public class AdminActivity extends AppCompatActivity {
             public void onRoleChange(int position) {
                 User user = userList.get(position);
                 String newRole = user.getRole().equals("admin") ? "user" : "admin";
-                userController.changeUserRole(user, newRole, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            userAdapter.notifyItemChanged(position);
-                            Toast.makeText(AdminActivity.this, "Role changed successfully", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Revert role change if unsuccessful
-                            user.setRole(user.getRole().equals("admin") ? "user" : "admin");
-                            userAdapter.notifyItemChanged(position);
-                            Toast.makeText(AdminActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                userController.changeUserRole(user, newRole, task -> {
+                    if (task.isSuccessful()) {
+                        user.setRole(newRole);
+                        userAdapter.notifyItemChanged(position);
+                        Toast.makeText(AdminActivity.this, "Role changed successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Revert role change if unsuccessful
+                        user.setRole(user.getRole().equals("admin") ? "user" : "admin");
+                        userAdapter.notifyItemChanged(position);
+                        Toast.makeText(AdminActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -92,7 +95,10 @@ public class AdminActivity extends AppCompatActivity {
                         String userId = document.getId();
                         User user = document.toObject(User.class);
                         user.setId(userId);
-                        userList.add(user);
+                        // Verifica se o usuário é o admin autenticado e o ignora na lista
+                        if (!user.getId().equals(currentUserId)) {
+                            userList.add(user);
+                        }
                     }
                     userAdapter.notifyDataSetChanged();
                 } else {
