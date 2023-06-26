@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 
 public class MainActivity extends AppCompatActivity {
-
     private UserController userController;
     private EditText emailField;
     private EditText passwordField;
@@ -31,7 +35,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = emailField.getText().toString();
                 String password = passwordField.getText().toString();
-                userController.login(email, password);
+                userController.login(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Redirect to HomeActivity after successful login
+                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            finish(); // Optional: finish MainActivity so user cannot go back to it
+                        } else {
+                            // Handle error
+                            Exception e = task.getException();
+                            Toast.makeText(MainActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
 
@@ -39,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Redirect to RegisterActivity when register button is clicked
                 Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }

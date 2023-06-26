@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".HomeActivity">
+
+    <TextView
+        android:id="@+id/welcome_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="22sp"
+        android:text="Welcome!" />
+
+    <EditText
+        android:id="@+id/role_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/welcome_message"
+        android:layout_marginTop="20dp"
+        android:hint="Enter new role" />
+
+    <Button
+        android:id="@+id/change_role_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/role_field"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Change Role" />
+
+</RelativeLayout>

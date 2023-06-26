@@ -1,39 +1,23 @@
 package com.example.trabprogmob;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class UserController {
-    private FirebaseAuth mAuth;
+    private FirebaseAuth auth;
 
     public UserController() {
-        mAuth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
-    public void register(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Registration successful
-                    } else {
-                        // Registration failed
-                    }
-                });
+    public Task<AuthResult> register(String email, String password) {
+        return auth.createUserWithEmailAndPassword(email, password);
     }
 
-    public void login(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in successful
-                    } else {
-                        // Sign in failed
-                    }
-                });
-    }
-
-    public FirebaseUser getCurrentUser() {
-        return mAuth.getCurrentUser();
+    public Task<AuthResult> login(String email, String password) {
+        return auth.signInWithEmailAndPassword(email, password);
     }
 }
+
 

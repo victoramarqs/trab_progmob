@@ -30,6 +30,9 @@
         <!-- RegisterActivity (registration screen) -->
         <activity android:name=".RegisterActivity" />
 
+        <!-- HomeActivity (main screen after successful login) -->
+        <activity android:name=".HomeActivity" />
+
     </application>
 
 </manifest>
