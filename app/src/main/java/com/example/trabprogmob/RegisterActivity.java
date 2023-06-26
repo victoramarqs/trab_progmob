@@ -4,15 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+
+import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -45,15 +44,28 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        if (!isEmailValid(email)) {
+            Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressDialog.setMessage("Registering Please Wait...");
         progressDialog.show();
 
-        userController.register(email, password, task -> {
+        // Generate a unique ID for the user
+        String userId = UUID.randomUUID().toString();
+
+        userController.register(userId, email, password, task -> {
             progressDialog.dismiss();
             if (task.isSuccessful()) {
                 Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
@@ -66,8 +78,11 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean isEmailValid(String email) {
+        // Simple email validation using regex
+        String emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        return email.matches(emailRegex);
+    }
+
 }
-
-
-
-

@@ -1,12 +1,28 @@
 package com.example.trabprogmob;
 
 public class User {
+    private String id;
     private String email;
     private String password;
+    private String role; // Novo campo para armazenar a função do usuário
 
-    public User(String email, String password) {
+    public User() {
+        // Construtor vazio necessário para o Firestore
+    }
+
+    public User(String id, String email, String password, String role) {
+        this.id = id;
         this.email = email;
         this.password = password;
+        this.role = role;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -24,5 +40,12 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-}
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+}

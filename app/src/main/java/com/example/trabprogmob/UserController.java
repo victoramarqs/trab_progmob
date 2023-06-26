@@ -1,49 +1,74 @@
 package com.example.trabprogmob;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class UserController {
-    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     public UserController() {
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
     }
 
+    public void register(String userId, String email, String password, OnCompleteListener<Void> callback) {
+        // Criptografa a senha usando BCrypt
+        String hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray());
 
-    public void register(String email, String password, OnCompleteListener<AuthResult> callback) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                FirebaseUser user = mAuth.getCurrentUser();
-                Map<String, Object> userDoc = new HashMap<>();
-                userDoc.put("role", "user");
+        User user = new User();
+        user.setId(userId); // Define o ID do usuário
+        user.setEmail(email);
+        user.setPassword(hashedPassword);
+        user.setRole("user");
 
-                db.collection("users").document(user.getUid()).set(userDoc).addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-                        callback.onComplete(task);
+        db.collection("users").document(userId)
+                .set(user)
+                .addOnCompleteListener(callback);
+    }
+
+
+    public void login(String email, String password, OnCompleteListener<User> callback) {
+        db.collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot snapshot = task.getResult();
+                        if (snapshot != null && !snapshot.isEmpty()) {
+                            User user = snapshot.getDocuments().get(0).toObject(User.class);
+                            if (user != null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+                                callback.onComplete(Tasks.forResult(user));
+                            } else {
+                                callback.onComplete(Tasks.forException(new Exception("Invalid credentials")));
+                            }
+                        } else {
+                            callback.onComplete(Tasks.forException(new Exception("User not found")));
+                        }
                     } else {
-                        callback.onComplete(null);
+                        callback.onComplete(Tasks.forException(task.getException()));
                     }
                 });
-            } else {
-                callback.onComplete(task);
-            }
-        });
     }
 
 
-    public Task<AuthResult> login(String email, String password) {
-        return mAuth.signInWithEmailAndPassword(email, password);
+    public void getAllUsers(OnCompleteListener<QuerySnapshot> listener) {
+        db.collection("users")
+                .get()
+                .addOnCompleteListener(listener);
+    }
+
+    public void deleteUser(User user, OnCompleteListener<Void> listener) {
+        db.collection("users").document(user.getId())
+                .delete()
+                .addOnCompleteListener(listener);
+    }
+
+    public void changeUserRole(User user, String newRole, OnCompleteListener<Void> listener) {
+        db.collection("users").document(user.getId())
+                .update("role", newRole)
+                .addOnCompleteListener(listener);
     }
 }
-
-
