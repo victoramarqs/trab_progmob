@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.TrabProgMob" parent="Base.Theme.TrabProgMob" />
+    <style name="Theme.TrabProgMob" parent="Theme.Material3.DayNight" />
 </resources>
